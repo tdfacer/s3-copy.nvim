@@ -40,10 +40,12 @@ use {
 
 The default S3 key is built from the current file path (relative to the CWD) plus a timestamp, with the configured prefix.
 
-### Suggested Keymap
+### Suggested Keymaps
 
 ```lua
 vim.keymap.set("v", "<leader>sy", "<cmd>S3CopySelection<cr>", { desc = "S3 copy selection" })
+vim.keymap.set("n", "<leader>sf", "<cmd>S3CopyFile<cr>", { desc = "S3 copy file" })
+vim.keymap.set("n", "<leader>sD", "<cmd>S3CopyDir<cr>", { desc = "S3 copy directory" })
 ```
 
 ## Commands
@@ -51,6 +53,8 @@ vim.keymap.set("v", "<leader>sy", "<cmd>S3CopySelection<cr>", { desc = "S3 copy 
 | Command | Description |
 |---------|-------------|
 | `:S3CopySelection` | Copy the current visual selection to S3 |
+| `:S3CopyFile [path]` | Copy a file to S3 (defaults to current buffer) |
+| `:S3CopyDir [path]` | Copy a directory to S3 (defaults to buffer directory or CWD) |
 
 ## Configuration
 
@@ -60,6 +64,10 @@ require("s3_copy").setup({
   key_prefix = "/s3-copy.nvim/",
 })
 ```
+
+## UI
+
+Prompts use `vim.ui.input`, so you can hook in a nicer UI with plugins like `dressing.nvim`.
 
 ## Requirements
 

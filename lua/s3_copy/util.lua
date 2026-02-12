@@ -28,6 +28,29 @@ local function normalize_key(key)
   return key
 end
 
+local function timestamp_suffix()
+  return os.date("%Y%m%d-%H%M%S")
+end
+
+local function normalize_path_for_key(path)
+  if not path or path == "" then
+    return ""
+  end
+  path = path:gsub("\\", "/")
+  path = path:gsub("^/+", "")
+  path = path:gsub("/+$", "")
+  return path
+end
+
+function M.default_filename_for_path(path)
+  local safe_path = normalize_path_for_key(path)
+  if safe_path == "" then
+    safe_path = "selection"
+  end
+
+  return string.format("%s-%s", safe_path, timestamp_suffix())
+end
+
 function M.default_filename()
   local bufname = vim.api.nvim_buf_get_name(0)
   local path
@@ -38,9 +61,15 @@ function M.default_filename()
     path = "selection"
   end
 
-  path = path:gsub("^/+", "")
-  local timestamp = os.date("%Y%m%d-%H%M%S")
-  return string.format("%s-%s", path, timestamp)
+  return M.default_filename_for_path(path)
+end
+
+function M.default_dir_key(path)
+  local safe_path = normalize_path_for_key(path)
+  if safe_path == "" then
+    safe_path = "directory"
+  end
+  return string.format("%s-%s/", safe_path, timestamp_suffix())
 end
 
 function M.build_s3_target(bucket, key)
