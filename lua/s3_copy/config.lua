@@ -2,6 +2,7 @@ local M = {}
 
 M.defaults = {
   bucket = nil,
+  read_bucket = nil,
   key_prefix = "/s3-copy.nvim/",
 }
 

@@ -18,4 +18,8 @@ M.copy_dir = function(path)
   require("s3_copy.commands").copy_dir(path)
 end
 
+M.read_file = function()
+  require("s3_copy.commands").read_file()
+end
+
 return M

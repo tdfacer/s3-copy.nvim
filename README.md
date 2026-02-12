@@ -46,6 +46,7 @@ The default S3 key is built from the current file path (relative to the CWD) plu
 vim.keymap.set("v", "<leader>sy", "<cmd>S3CopySelection<cr>", { desc = "S3 copy selection" })
 vim.keymap.set("n", "<leader>sf", "<cmd>S3CopyFile<cr>", { desc = "S3 copy file" })
 vim.keymap.set("n", "<leader>sD", "<cmd>S3CopyDir<cr>", { desc = "S3 copy directory" })
+vim.keymap.set("n", "<leader>sr", "<cmd>S3ReadFile<cr>", { desc = "S3 read file" })
 ```
 
 ## Commands
@@ -55,15 +56,19 @@ vim.keymap.set("n", "<leader>sD", "<cmd>S3CopyDir<cr>", { desc = "S3 copy direct
 | `:S3CopySelection` | Copy the current visual selection to S3 |
 | `:S3CopyFile [path]` | Copy a file to S3 (defaults to current buffer) |
 | `:S3CopyDir [path]` | Copy a directory to S3 (defaults to buffer directory or CWD) |
+| `:S3ReadFile` | Select and read an S3 object into a scratch buffer |
 
 ## Configuration
 
 ```lua
 require("s3_copy").setup({
   bucket = "my-bucket",
+  read_bucket = "my-bucket",
   key_prefix = "/s3-copy.nvim/",
 })
 ```
+
+`read_bucket` defaults to `bucket` if unset.
 
 ## UI
 
