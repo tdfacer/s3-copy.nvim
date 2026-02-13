@@ -222,6 +222,21 @@ local function open_scratch_buffer(name, content)
   vim.api.nvim_set_current_buf(buf)
 end
 
+local function list_files_for_picker()
+  local cwd = vim.fn.getcwd()
+  local paths = vim.fn.globpath(cwd, "**/*", false, true)
+  local files = {}
+
+  for _, path in ipairs(paths) do
+    local stat = vim.loop.fs_stat(path)
+    if stat and stat.type == "file" then
+      table.insert(files, path)
+    end
+  end
+
+  return files
+end
+
 function M.copy_selection()
   if not ensure_aws_cli() then
     return
@@ -340,12 +355,27 @@ function M.copy_file(path)
   if path and path ~= "" then
     proceed(normalize_path(path))
   else
-    prompt_input("File path: ", default_path, function(value)
-      if value == nil then
-        return
-      end
-      proceed(normalize_path(value))
-    end)
+    local files = list_files_for_picker()
+    if #files > 0 then
+      vim.ui.select(files, {
+        prompt = "Select file to copy:",
+        format_item = function(item)
+          return vim.fn.fnamemodify(item, ":.")
+        end,
+      }, function(choice)
+        if not choice then
+          return
+        end
+        proceed(choice)
+      end)
+    else
+      prompt_input("File path: ", default_path, function(value)
+        if value == nil then
+          return
+        end
+        proceed(normalize_path(value))
+      end)
+    end
   end
 end
 
