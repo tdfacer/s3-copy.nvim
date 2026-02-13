@@ -8,7 +8,7 @@ Copy a visual selection to S3 using the AWS CLI.
 
 ```lua
 {
-  "trevor/s3-copy.nvim",
+  "tdfacer/s3-copy.nvim",
   config = function()
     require("s3_copy").setup({
       bucket = "my-bucket",
@@ -22,7 +22,7 @@ Copy a visual selection to S3 using the AWS CLI.
 
 ```lua
 use {
-  "trevor/s3-copy.nvim",
+  "tdfacer/s3-copy.nvim",
   config = function()
     require("s3_copy").setup({
       bucket = "my-bucket",

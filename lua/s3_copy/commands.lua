@@ -158,6 +158,10 @@ local function run_aws_cp(args, input)
   return true
 end
 
+local function aws_base_args()
+  return { "env", "AWS_PAGER=", "AWS_CLI_AUTO_PROMPT=off", "aws", "--no-cli-pager" }
+end
+
 local function list_s3_objects(bucket, prefix)
   local uri = build_bucket_uri(bucket, prefix)
   if not uri then
@@ -165,7 +169,7 @@ local function list_s3_objects(bucket, prefix)
     return nil
   end
 
-  local output = vim.fn.system({ "aws", "s3", "ls", "--recursive", "--only-show-errors", uri })
+  local output = vim.fn.system(vim.list_extend(aws_base_args(), { "s3", "ls", "--recursive", uri }))
   if vim.v.shell_error ~= 0 then
     local message = vim.trim(output)
     if message == "" then
@@ -232,7 +236,7 @@ function M.copy_selection()
   local default_key = util.build_default_key(config.options.key_prefix, util.default_filename())
 
   prompt_bucket_and_key(default_key, function(target)
-    local ok = run_aws_cp({ "aws", "s3", "cp", "--only-show-errors", "-", target }, selection)
+    local ok = run_aws_cp(vim.list_extend(aws_base_args(), { "s3", "cp", "--only-show-errors", "-", target }), selection)
     if ok then
       vim.notify("Copied selection to " .. target, vim.log.levels.INFO)
     end
@@ -277,7 +281,7 @@ function M.read_file()
           return
         end
 
-        local output = vim.fn.system({ "aws", "s3", "cp", "--only-show-errors", target, "-" })
+        local output = vim.fn.system(vim.list_extend(aws_base_args(), { "s3", "cp", "--only-show-errors", target, "-" }))
         if vim.v.shell_error ~= 0 then
           local message = vim.trim(output)
           if message == "" then
@@ -326,7 +330,7 @@ function M.copy_file(path)
     )
 
     prompt_bucket_and_key(default_key, function(target)
-      local ok = run_aws_cp({ "aws", "s3", "cp", "--only-show-errors", resolved_path, target })
+      local ok = run_aws_cp(vim.list_extend(aws_base_args(), { "s3", "cp", "--only-show-errors", resolved_path, target }))
       if ok then
         vim.notify("Copied file to " .. target, vim.log.levels.INFO)
       end
@@ -377,15 +381,14 @@ function M.copy_dir(path)
     )
 
     prompt_bucket_and_key(default_key, function(target)
-      local ok = run_aws_cp({
-        "aws",
+      local ok = run_aws_cp(vim.list_extend(aws_base_args(), {
         "s3",
         "cp",
         "--only-show-errors",
         "--recursive",
         resolved_path,
         target,
-      })
+      }))
       if ok then
         vim.notify("Copied directory to " .. target, vim.log.levels.INFO)
       end
